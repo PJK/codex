@@ -2,7 +2,7 @@ CodEx CLI (CCLI) is a remote CLI interface to CodEx (http://codex2.ms.mff.cuni.c
 
 ## Installation
 
-Repo: gitolite@pavelkalvoda.com:codex.git
+Repo: `gitolite@pavelkalvoda.com:codex.git`
 
 `git clone git://github.com/PJK/codex.git && cd codex`
 
