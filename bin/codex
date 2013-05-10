@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+$:.unshift File.dirname(__FILE__) + '/../'
+require 'lib/codex'
+require 'trollop'
+require 'logger'
+require 'pry' if ENV['CODEX_DEBUG']
+
+SUBCOMMANDS= %w(submit list init result desc)
+BANNER = <<-END
+CodEx CLI v#{Codex::VERSION}
+Available subcommands are: #{SUBCOMMANDS.join(', ')}
+END
+
+module Codex
+  Log = Logger.new(STDOUT)
+  Log.level = Logger::WARN
+  Saveable = [:location, :username, :password, :group, :task]
+  Extensions = %w(c cpp cs pas)
+end
+
+global = Trollop::options do
+  banner BANNER
+  opt :location, "CodEx instance URL", :type => :string
+  opt :username, "Your username", :type => :string
+  opt :password, "Your password", :type => :string
+  opt :group, "Group ID", :type => :int
+  opt :task, "Task ID", :type => :int
+  opt :verbose, "Be chatty"
+  opt :debug, "Include debugging info"
+  stop_on SUBCOMMANDS
+end
+
+Codex::Log.level = Logger::INFO if global[:verbose]
+Codex::Log.level = Logger::DEBUG if global[:debug]
+
+context = Codex::Context.new(global)
+
+subc = ARGV.shift
+
+ssub = {}
+case subc
+  when 'submit'
+    sub = Trollop::options do
+      banner """Usage: codex [GLOBAL OPTIONS] submit FILE
+All specifiers up to task must be set"""
+      opt :lang, "Language (ovveride guess by extension): c, cpp, cs, pas", :type => :string
+      opt :quick, "Just submit the file; don't poll for results."
+      opt :comment, "Comment to submit along", :type => :string, :default => ""
+    end
+    Trollop::die :lang, "Unknown option" if sub[:lang_given] && !Codex::Extensions.include?(sub[:lang])
+    sub[:file] = ARGV.shift
+    Trollop::die "Missing parameter: file" unless sub[:file]
+    subexec = Codex::Submit
+  when 'list'
+    sub = Trollop::options do
+      banner """Usage: codex [GLOBAL OPTIONS] list 
+By default, this prints the most specific list available"""
+      opt :groups, "List groups"
+      opt :tasks, "List tasks"
+    end
+    subexec = Codex::List
+  when 'init'
+    sub =Trollop::options do
+      banner """Usage: codex GLOBAL_OPTIONS init
+Creates a .codex file containing given settings."""
+      opt :dir, "Directory to target instead of CWD", :type => :string
+      opt :full, "Write all settings instead of \"diff\""""
+    end
+    subexec = Codex::Init
+  when 'result'
+    sub = Trollop::options do
+      banner """Usage: codex [GLOBAL OPTIONS] result [SUBMISSION_ID]
+Prints evaluation result. All specifiers up to task must be set. Prints the latest submission by default."""
+      opt :fetch, "Download submission source"
+    end
+    sub[:id] = ARGV.shift
+    subexec = Codex::Result
+  when 'desc'
+    sub = Trollop::options do
+      banner """Usage: codex desc
+Prints (plaintext) description. All specifiers up to task must be set."""
+    end
+    subexec = Codex::Description
+  else
+    puts BANNER
+    Trollop::die "Missing subcommand"
+
+    end
+
+
+
+subexec.new(sub, context).print
