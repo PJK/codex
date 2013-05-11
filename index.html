@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Codex : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Codex</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/PJK/codex">View on GitHub</a>
+
+          <h1 id="project_title">Codex</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/PJK/codex/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/PJK/codex/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>CodEx CLI (CCLI) is a remote CLI interface to CodEx (<a href="http://codex2.ms.mff.cuni.cz/project/">http://codex2.ms.mff.cuni.cz/project/</a>). It aims to speed you up by eliminating (bothersome) interaction with CodEx's web interface.</p>
+
+<h2>Installation</h2>
+
+<p>Repo: <code>gitolite@pavelkalvoda.com:codex.git</code></p>
+
+<p><code>git clone git://github.com/PJK/codex.git &amp;&amp; cd codex</code></p>
+
+<p><code>bundle</code></p>
+
+<p><code>rake build</code></p>
+
+<p><code>gem install pkg/codex-X.Y.Z.gem</code></p>
+
+<h2>Short tutorial</h2>
+
+<p>Basic invocation: <code>codex submit -l LOCATION -u USERNAME -g GROUPID -t TASKID FILENAME</code> will prompt you for your password, submit your solution and print result.
+Example: </p>
+
+<pre><code>$&gt;codex submit -l codex.ms.mff.cuni.cz/codex -u pepa -g 56 -t 34 hello.c
+Enter your password: *****RET
+OK, waiting for results
+Jailing user 'codex' (UID 1003, GID 1003) into directory '/home/codex/workers/eval2/jail'
+Initializing... OK
+Preparing sandbox... running locally (INSECURE), OK
+Finding source... ./inbox/source.c
+Compiling... OK
+Test 1... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (50 points)
+Test 2... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (50 points)
+Test 3... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (50 points)
+Test 4... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (50 points)
+Test 5... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (100 points)
+Test 6... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (100 points)
+Test 7... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (300 points)
+Test 8... &lt;init&gt; &lt;run&gt; &lt;filter&gt; &lt;check&gt; OK:OK (300 points)
+</code></pre>
+
+<p>Riiight, but this doesn't save us any work, in fact, quite the contrary. That's where CCLI dotfile come in. They are essentially configuration YAML files containing default settings to use. CCLI will look for its dotfiles (<code>.codex</code>) in your current working directory and all its parent directories. "Closer", more specific dotfiles have priority (can override general settings from upper directories). Also, invocation flags take priority over all dotfile-specified settings.</p>
+
+<table>
+<tr>
+<th align="left">.codex name</th>
+<th align="left">flag name</th>
+<th align="left">example</th>
+<th align="left">remarks</th>
+</tr>
+<tr>
+<td align="left"><code>username</code></td>
+<td align="left">
+<code>-u</code>, <code>--username</code>
+</td>
+<td align="left"><code>pepek</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>password</code></td>
+<td align="left">
+<code>-p</code>, <code>--password</code>
+</td>
+<td align="left"><code>l33tpswd</code></td>
+<td align="left">You probably don't want your password hanging in your shell's history...</td>
+</tr>
+<tr>
+<td align="left"><code>location</code></td>
+<td align="left">
+<code>-l</code>, <code>--location</code>
+</td>
+<td align="left"><code>https://codex.ms.mff.cuni.cz/codex</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>group</code></td>
+<td align="left">
+<code>-g</code>, <code>--group</code>
+</td>
+<td align="left"><code>42</code></td>
+<td align="left">Can be determined from links in your groups overview scren (<code>https://codex.ms.mff.cuni.cz/codex/?module=groups</code>, <code>https://codex.ms.mff.cuni.cz/codex/?groupId=390&amp;module=groups%2Ftasks</code>)</td>
+</tr>
+<tr>
+<td align="left"><code>task</code></td>
+<td align="left">
+<code>-t</code>, <code>--task</code>
+</td>
+<td align="left"><code>4</code></td>
+<td align="left"></td>
+</tr>
+</table><p>... or any CCLI global flag, using a full name! A developer, for example, might use <code>debug: true</code>.</p>
+
+<p>Furthermore, you can use <code>codex init</code> to create your dotfiles for you.</p>
+
+<p>"Okay, that's better. But I still have to figure out those IDs from the web..." you say. No, not really. <code>codex list</code> to the rescue! List groups, task &amp; submissions:</p>
+
+<pre><code>$&gt;codex list -g #at least login required                  
+Programování 1 pro pokročilé (ZS)          390
+Programování 2 pro pokročilé (LS)          427
+...
+
+</code></pre>
+
+<pre><code>$&gt;codex list -t #at least group specification required
+Hledání v setříděném poli (ze souboru)    5/5        2647
+Byrokratický aparát                       5/5        2646
+Théseus a Minotauros                     10/10       2645
+...
+</code></pre>
+
+<pre><code>$&gt;codex list #task must be specified
+8.5. (20h)                 cpp  0 %    163603                                         
+8.5. (19:52)               cpp  0 %    163597                                         
+12.10.2012 (14:35)         c    100 %  134191
+</code></pre>
+
+<p>Next up, look into a submission:</p>
+
+<pre><code>$&gt;codex result
+Jailing user 'codex' (UID 1003, GID 1003) into directory '/home/codex/workers/eval2/jail'
+Initializing... OK
+Preparing sandbox... running locally (INSECURE), OK
+Finding source... ./inbox/source.cpp
+Compiling... OK
+Test 1... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 2... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 3... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 4... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 5... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 6... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 7... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+Test 8... &lt;init&gt; &lt;run&gt; SG:Caught fatal signal 11 (SIGSEGV)
+</code></pre>
+
+<p>... or even get the source code using <code>--fetch</code></p>
+
+<p>Finally, submitting your solutions:</p>
+
+<pre><code>$&gt;codex submit source.c
+</code></pre>
+
+<h2>Development</h2>
+
+<p>CCLI is built using Mechanize, Nokogiri and Trollop. The source should be fairly easy to understand. If you want to improve/inspect CCLI, the <code>--debug</code> flag might be of interest to you -- it will enable extensive logging of program's operations. I also highly recommend using Pry for debugging and runtime inspection. It will be loaded if <code>CODEX_DEBUG</code> environment variable is specified.</p>
+
+<p>CCLI uses Bundler, therefore you can easily track dependencies, manage revisions and redistribute modifies versions. Just see <code>rake -T</code></p>
+
+<h2>Some final notes</h2>
+
+<ul>
+<li>Each subcommand also takes some options. They have to be specified <em>after</em> the subcommand. Exaple: <code>codex -g 15 --fetch solution</code> is wrong and won't work, should be <code>codex -g 15 solution --fetch</code> </li>
+<li>CCLI won't work with Ruby 1.7 and older</li>
+<li>There is wealth of flags that modify behaviour of CCLI. Use <code>-h, --help</code> to your advantage</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Codex maintained by <a href="https://github.com/PJK">PJK</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
