@@ -1,16 +1,19 @@
 CodEx CLI (CCLI) is a remote CLI interface to CodEx (http://codex2.ms.mff.cuni.cz/project/). It aims to speed you up by eliminating (bothersome) interaction with CodEx's web interface.
 
+Homepage: http://pjk.github.io/codex/
+
 ## Installation
 
-Repo: `gitolite@pavelkalvoda.com:codex.git`
+If you are using Ruby packages provided by Ubuntu/Debian/SUSE official repositories, you will also need to install "development headers".
+Typically, it will be the  `ruby1.9.1-dev` or `ruby1.9-dev` or `ruby2-dev` package.
+Furthermore, CCLI requires following libraries to be present: `libxslt-dev libxml2-dev`
+Also, if you are using self-built version of Ruby, make sure it was compiled with OpenSSL support.
 
-`git clone git://github.com/PJK/codex.git && cd codex`
-
-`bundle`
-
-`rake build`
-
-`gem install pkg/codex-X.Y.Z.gem`
+1. Get the source either from https://github.com/PJK/codex/tarball/master or simply checkout `gitolite@pavelkalvoda.com:codex.git`
+2. `cd` to its root directory
+3. Run `bundle` to install dependencies
+4. Run `rake build` to "build" the gem
+5. Install with `gem install pkg/codex-X.Y.Z.gem`
 
 ## Short tutorial
 
@@ -101,13 +104,15 @@ $>codex submit source.c
 
 ##Development
 
-CCLI is built using Mechanize, Nokogiri and Trollop. The source should be fairly easy to understand. If you want to improve/inspect CCLI, the `--debug` flag might be of interest to you -- it will enable extensive logging of program's operations. I also highly recommend using Pry for debugging and runtime inspection. It will be loaded if `CODEX_DEBUG` environment variable is specified.
-
+CCLI is built using Mechanize, Nokogiri and Trollop. The source should be fairly easy to understand. If you want to improve/inspect CCLI, the `--debug` flag might be of interest to you - it will enable extensive logging of program's operations. I also highly recommend using Pry for debugging and runtime inspection. It will be loaded if ```CODE_DEBUG``` environment variable is specified.
 CCLI uses Bundler, therefore you can easily track dependencies, manage revisions and redistribute modifies versions. Just see `rake -T`
 
+##Issues and support
+
+Please report any issues to https://github.com/PJK/codex/issues. If they are reproducible, make sure to include info generated with `--debug`.
 
 ##Some final notes
 
-- Each subcommand also takes some options. They have to be specified *after* the subcommand. Exaple: `codex -g 15 --fetch solution` is wrong and won't work, should be `codex -g 15 solution --fetch` 
+- Each subcommand also takes some options. They have to be specified *after* the subcommand. Example: `codex -g 15 --fetch solution` is wrong and won't work, should be `codex -g 15 solution --fetch` 
 - CCLI won't work with Ruby 1.7 and older
 - There is wealth of flags that modify behaviour of CCLI. Use `-h, --help` to your advantage
