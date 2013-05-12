@@ -1,3 +1,5 @@
+# encoding: utf-8 
+
 module Codex
   class Submit < Subcommand
     def initialize(opts, context)
