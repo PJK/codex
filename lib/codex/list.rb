@@ -25,7 +25,6 @@ module Codex
 
     def fetch_tasks
       @tasks = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks").search('table tr')[1..-1].map do |x|
-        #binding.pry
         parse_task(x, x.search('td'), x.search('td')[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/))
       end
     end
@@ -46,9 +45,8 @@ module Codex
     end
 
     def fetch_submissions
-      s = @context.get("/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&module=groups%2Ftasks&page=submits")
-      t = s.search('table')[2].search('tr')[1..-1]
-      res = t.map do |x|
+      @submissions = @context.get("/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&module=groups%2Ftasks&page=submits").
+        search('table')[2].search('tr')[1..-1].map do |x|
         tds = x.search('td')
         {
           :date => tds[1].text.strip,
