@@ -25,7 +25,8 @@ module Codex
 
     def fetch_tasks
       @tasks = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks").search('table tr')[1..-1].map do |x|
-        parse_task(x, x.search('td'), td[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/))
+        #binding.pry
+        parse_task(x, x.search('td'), x.search('td')[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/))
       end
     end
 
