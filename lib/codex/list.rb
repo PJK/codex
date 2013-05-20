@@ -47,7 +47,11 @@ module Codex
     def fetch_submissions
       @submissions = @context.get("/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&module=groups%2Ftasks&page=submits").
         search('table')[2].search('tr')[1..-1].map do |x|
-        tds = x.search('td')
+          parse_submission(x.search('td'))
+      end
+    end
+
+    def parse_submission(tds)
         {
           :date => tds[1].text.strip,
           :extension => tds[4].text.strip,
@@ -55,9 +59,7 @@ module Codex
           :comment => tds[7].text.strip,
           :id => tds[8].search('a').pop.get_attribute('href').match(/&download=(\d+)/)[1]
         }
-      end
     end
-
 
     def print_submissions
        fetch_submissions.each {|x| puts("%-26<date>s %-4<extension>s %-6<rating>s %-6<id>d %40<comment>s" % x)}
