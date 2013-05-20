@@ -25,8 +25,11 @@ module Codex
 
     def fetch_tasks
       @tasks = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks").search('table tr')[1..-1].map do |x|
-        td = x.search('td')
-        points = td[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/)
+        parse_task(x, x.search('td'), td[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/))
+      end
+    end
+
+    def parse_task(x, td, points)
         {
           :name => x.search('.cellHeader').pop.text.strip,
           :points => {
@@ -35,7 +38,6 @@ module Codex
           },
           :id => td[0].search('a').pop.get_attribute('href').match(/taskId=(\d+)/)[1]
         }
-      end
     end
 
     def print_tasks
