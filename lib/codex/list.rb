@@ -23,22 +23,23 @@ module Codex
       @groups.each {|x| puts sprintf("%-40s %5d", x[:name], x[:id])}
     end
 
-    def print_tasks
-      t = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks")
-      res = t.search('table tr')[1..-1].map do |x|
-        head = x.search('.cellHeader').pop
-        x = x.search('td')
-        points = x[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/)
+    def fetch_tasks
+      @tasks = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks").search('table tr')[1..-1].map do |x|
+        td = x.search('td')
+        points = td[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/)
         ret =  {
-          :name => head.text.strip,
+          :name => x.search('.cellHeader').pop.text.strip,
           :points => {
             :max => points[2],
             :attained => points[1],
           },
-          :id => x[0].search('a').pop.get_attribute('href').match(/taskId=(\d+)/)[1]
+          :id => td[0].search('a').pop.get_attribute('href').match(/taskId=(\d+)/)[1]
         }
       end
-      res.each {|x| puts("%-40s %2d/%-2d %10d" % [x[:name], x[:points][:attained], x[:points][:max], x[:id]])}
+    end
+
+    def print_tasks
+      fetch_tasks.each {|x| puts("%-40s %2d/%-2d %10d" % [x[:name], x[:points][:attained], x[:points][:max], x[:id]])}
     end
 
     def fetch_submissions
