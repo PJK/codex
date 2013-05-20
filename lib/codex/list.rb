@@ -27,7 +27,7 @@ module Codex
       @tasks = @context.get("/?groupId=#{@context.opts[:group]}&C2_amount=0&module=groups%2Ftasks").search('table tr')[1..-1].map do |x|
         td = x.search('td')
         points = td[2].text.match(/Přiděleno: (\d+)Max.: (\d+)/)
-        ret =  {
+        {
           :name => x.search('.cellHeader').pop.text.strip,
           :points => {
             :max => points[2],
