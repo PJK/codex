@@ -12,12 +12,12 @@ module Codex
     def print
       #raise Exception.new("Missing submission ID") unless @opts[:id]
       @opts[:id] = latest_id unless @opts[:id]
-      p = @context.get("/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&submitId=#{@opts[:id]}&module=groups%2Ftasks&page=submitInfo")
+      url = "/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&submitId=#{@opts[:id]}&module=groups%2Ftasks&page=submitInfo"
       if @opts[:fetch] then
-        puts  @context.get("/?groupId=#{@context.opts[:group]}&taskId=#{@context.opts[:task]}&submitId=#{@opts[:id]}&download=1&module=groups%2Ftasks&page=submitInfo").body
+        puts @context.get(url + "&download=1").body
         
       else
-        puts p.search('pre').shift.text
+        puts @context.get(url).search('pre').shift.text
       end
     end
   end
