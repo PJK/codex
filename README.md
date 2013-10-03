@@ -45,8 +45,8 @@ Riiight, but this doesn't save us any work, in fact, quite the contrary. That's 
 |:---|:---|:---|:---|
 |`username`|`-u`, `--username`| `pepek` ||
 |`password`| `-p`, `--password` | `l33tpswd`| You probably don't want your password hanging in your shell's history... |
-|`location`| `-l`, `--location` | `https://codex.ms.mff.cuni.cz/codex` ||
-|`group`| `-g`, `--group` | `42` | Can be determined from links in your groups overview scren (`https://codex.ms.mff.cuni.cz/codex/?module=groups`, `https://codex.ms.mff.cuni.cz/codex/?groupId=390&module=groups%2Ftasks`)|
+|`location`| `-l`, `--location` | `https://codex.ms.mff.cuni.cz/codex-prg` ||
+|`group`| `-g`, `--group` | `42` | Can be determined from links in your groups overview scren (`https://codex.ms.mff.cuni.cz/codex/?module=groups`, `https://codex.ms.mff.cuni.cz/codex-prg/?groupId=390&module=groups%2Ftasks`)|
 |`task`|`-t`, `--task`| `4` ||
 ... or any CCLI global flag, using a full name! A developer, for example, might use `debug: true`.
 
